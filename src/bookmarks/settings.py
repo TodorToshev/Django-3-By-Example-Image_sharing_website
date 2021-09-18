@@ -32,6 +32,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    #custom:
+    'account',
+
+    #default:
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,8 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #custom
-    'account',
+    #custom 
+    # NOTE: custom 'account' app has to be above django.contrib.admin 
+    # because they both have the same path to the logout template, 
+    # so DJ reaches the contrib.admin one and loads the dj-admin logout template
+    # instead of the custom one.'''
+    # 'account',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +135,9 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
