@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     #custom:
     'account',
     'images',
+    'easy_thumbnails',
 
     #default:
     'django.contrib.admin',
