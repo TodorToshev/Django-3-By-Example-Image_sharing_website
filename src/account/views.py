@@ -5,8 +5,13 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from account.models import Profile
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
-
+from django.contrib.auth.views import LoginView
 # Create your views here.
+
+
+# class AdminLogin(LoginView):
+#     template_name = 'account/login.html'
+
 
 def user_login(request):
 
@@ -73,10 +78,6 @@ def edit(request):
     if request.method == 'POST':
         user_form = UserEditForm(instance=request.user, data=request.POST)
         profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files = request.FILES)
-
-        #TODO remove later
-        print(":::: ", request.user, request.user.profile)
-
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
