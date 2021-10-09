@@ -70,8 +70,7 @@ def image_list(request):
         images = paginator.page(1)
     except EmptyPage:
         if request.is_ajax():
-            # If the request is AJAX and the page is out of range
-            # return an empty page
+            # If the request is AJAX and the page is out of range, return an empty page
             return HttpResponse('')
         # If page is out of range deliver last page of results
         images = paginator.page(paginator.num_pages)
