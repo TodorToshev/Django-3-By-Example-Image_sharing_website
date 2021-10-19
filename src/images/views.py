@@ -8,6 +8,7 @@ from .models import Image
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from common.decorators import ajax_required
+from actions.utils import create_action
 
 
 @login_required
@@ -50,6 +51,7 @@ def image_like(request):
             # and we modify the image.users_like set according to the *action form the html*. Very import and cool.  
             if action == 'like':
                 image.users_like.add(request.user)
+                create_action(request.user, 'likes', image)
             else:
                 image.users_like.remove(request.user)
             return JsonResponse({'status': 'ok'})
