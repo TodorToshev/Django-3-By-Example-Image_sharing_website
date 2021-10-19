@@ -118,6 +118,7 @@ def user_follow(request):
     action = request.POST.get('action')
     print(request.POST)
     if user_id and action:
+        print("id and action")
         try:
             user = User.objects.get(id=user_id)
             if action == 'follow':
