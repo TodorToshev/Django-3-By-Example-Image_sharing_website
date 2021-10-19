@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from account.models import Profile
+from actions.models import Action
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404
@@ -60,7 +61,20 @@ def user_login(request):
 
 @login_required
 def dashboard(request):
-    return render(request, "account/dashboard.html", {"section": 'dashboard'})
+    # display actions: 
+    '''
+    retrieve all actions from the database, excluding the ones 
+    performed by the current user. By default, you retrieve the latest actions performed 
+    by all users on the platform. If the user is following other users, you restrict the 
+    query to retrieve only the actions performed by the users they follow. 
+    '''
+    actions = Action.objects.exclude(user=request.user)
+    following_ids = request.user.following.values_list('id', flat=True)
+    if following_ids:
+        actions = actions.filter(user_id__in=following_ids)
+    actions = actions.select_related('user', 'user__profile').prefetch_related('target')[:10]
+
+    return render(request, "account/dashboard.html", {"section": 'dashboard', 'actions': actions})
 
 def register(request):
     if request.method == 'POST':
@@ -124,7 +138,7 @@ def user_follow(request):
         try:
             user = User.objects.get(id=user_id)
             if action == 'follow':
-                Contact.objects.get_or_create(user_from=request.user, user_to=user)
+                Contact.objects.get_or_create(user_form=request.user, user_to=user)
                 create_action(request.user, 'is following', user)
             else:
                 Contact.objects.filter(user_from=request.user, user_to=user).delete()
